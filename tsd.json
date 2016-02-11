@@ -13,6 +13,42 @@
     },
     "stats/stats.d.ts": {
       "commit": "3191f6e0088eee07c4d8fd24e4d27a40a60d9eb9"
+    },
+    "gulp-debug/gulp-debug.d.ts": {
+      "commit": "44c9273e1e92bc95368f599d1dcda9f560a68956"
+    },
+    "vinyl/vinyl.d.ts": {
+      "commit": "44c9273e1e92bc95368f599d1dcda9f560a68956"
+    },
+    "node/node.d.ts": {
+      "commit": "44c9273e1e92bc95368f599d1dcda9f560a68956"
+    },
+    "chalk/chalk.d.ts": {
+      "commit": "44c9273e1e92bc95368f599d1dcda9f560a68956"
+    },
+    "gulp-util/gulp-util.d.ts": {
+      "commit": "44c9273e1e92bc95368f599d1dcda9f560a68956"
+    },
+    "gulp-inject/gulp-inject.d.ts": {
+      "commit": "44c9273e1e92bc95368f599d1dcda9f560a68956"
+    },
+    "gulp-sourcemaps/gulp-sourcemaps.d.ts": {
+      "commit": "44c9273e1e92bc95368f599d1dcda9f560a68956"
+    },
+    "gulp-typescript/gulp-typescript.d.ts": {
+      "commit": "44c9273e1e92bc95368f599d1dcda9f560a68956"
+    },
+    "q/Q.d.ts": {
+      "commit": "44c9273e1e92bc95368f599d1dcda9f560a68956"
+    },
+    "orchestrator/orchestrator.d.ts": {
+      "commit": "44c9273e1e92bc95368f599d1dcda9f560a68956"
+    },
+    "through2/through2.d.ts": {
+      "commit": "44c9273e1e92bc95368f599d1dcda9f560a68956"
+    },
+    "gulp/gulp.d.ts": {
+      "commit": "44c9273e1e92bc95368f599d1dcda9f560a68956"
     }
   }
 }
