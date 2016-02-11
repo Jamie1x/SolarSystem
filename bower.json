@@ -1,0 +1,25 @@
+{
+  "name": "Kennedy_SolarSystem",
+  "homepage": "https://github.com/Jamie1x/SolarSystem",
+  "authors": [
+    "Jamie1x <jkennedy1x@gmail.com>"
+  ],
+  "description": "COMP392 - Assignment 2",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "scripts/lib"
+  ],
+  "dependencies": {
+    "three.js": "~0.72.0",
+    "dat-gui": "~0.5.1",
+    "stats.js": "*",
+    "threex.colliders": "*"
+  }
+}

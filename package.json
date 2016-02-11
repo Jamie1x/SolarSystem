@@ -1,0 +1,29 @@
+{
+  "name": "kennedy_solarsystem",
+  "version": "1.0.0",
+  "description": "Comp392-Assignment2 for Centennial college",
+  "main": "app.js",
+  "dependencies": {
+    "typescript": "^1.7.5"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-connect": "^2.3.1",
+    "gulp-debug": "^2.1.2",
+    "gulp-inject": "^3.0.0",
+    "gulp-open": "^1.0.0",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-typescript": "^2.11.0",
+    "gulp-util": "^3.0.7"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jamie1x/SolarSystem.git"
+  },
+  "author": "Jamie Kennedy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Jamie1x/SolarSystem/issues"
+  },
+  "homepage": "https://github.com/Jamie1x/SolarSystem#readme"
+}
