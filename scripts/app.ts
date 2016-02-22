@@ -19,6 +19,12 @@ var scene: Scene;
 var renderer: Renderer;
 var camera: PerspectiveCamera;
 var sun: Mesh;
+var mercury: Mesh;
+var venus: Mesh;
+var earth: Mesh;
+var moon: Mesh;
+var mars: Mesh;
+var jupiter: Mesh;
 var plane: Mesh;
 var spotLight: SpotLight;
 var pointLight: PointLight;
@@ -27,6 +33,12 @@ var control: Control;
 var gui: GUI;
 var stats:Stats;
 var axis: AxisHelper;
+var mercuryaxes = new THREE.Object3D;
+var venusaxes = new THREE.Object3D;
+var earthaxes = new THREE.Object3D;
+var moonaxes = new THREE.Object3D;
+var marsaxes = new THREE.Object3D;
+var jupiteraxes = new THREE.Object3D;
 
 function init() {
     // Instantiate a new Scene object
@@ -41,21 +53,43 @@ function init() {
     scene.add(axis);
     
     //Add Sun to solar system
-	/*sphereGeometry = new SphereGeometry(0.75, 32, 32);
-	sphereMaterial = new LambertMaterial({color:0xffcc99});
-	sun = new Mesh(sphereGeometry, sphereMaterial);
-    sun.position.x = 0;
-    sun.position.y = 4.9;
-    sun.position.z = 0;
-	sun.castShadow = true;
-    sun.receiveShadow = true;
-	scene.add(sun);//Add sun to scene
-	console.log("Added sun to scene...");*/
-    
-    sun = createMesh(new SphereGeometry(5, 20, 20), "sun.jpg");
-    sun.castShadow = true;
-    sun.receiveShadow = true;
+    sun = gameObject(new SphereGeometry(3, 20, 20), "sun.jpg",0,0,0);
     scene.add(sun);
+    console.log("Added sun to scene...");
+    
+    //add mercury to solar system
+    mercury = gameObject(new SphereGeometry(0.6,20,20), "mercury.jpg",4,0,0);
+    mercuryaxes.add(mercury);
+    scene.add(mercuryaxes);
+    console.log("added mercury to scene...");
+    
+    //add venus to solar system
+    venus = gameObject(new SphereGeometry(0.8,20,20), "venus.jpg",6,0,0);
+    venusaxes.add(venus);
+    scene.add(venusaxes);
+    console.log("added venus to scene...");
+    
+    //add earth to solar system
+    earth = gameObject(new SphereGeometry(1,20,20), "earth.jpg",9,0,0);
+    earthaxes.add(earth);
+    //add moon to solar system
+    moon = gameObject(new SphereGeometry(0.4,20,20),"moon.jpg",1.5,0,0);
+    moonaxes.add(moon);
+    earth.add(moonaxes);
+    scene.add(earthaxes);
+    console.log("added earth and moon to scene...");
+    
+    //add mars to solar system
+    mars = gameObject(new SphereGeometry(0.6,20,20), "mars.jpg",13,0,0);
+    marsaxes.add(mars);
+    scene.add(marsaxes);
+    console.log("added mars to scene...");
+    
+    //add jupiter to solar system
+    jupiter = gameObject(new SphereGeometry(1.6,20,20), "jupiter.jpg",17,0,0);
+    jupiteraxes.add(jupiter);
+    scene.add(jupiteraxes);
+    console.log("added jupiter to scene...");
     
     // Add an AmbientLight to the scene
     ambientLight = new AmbientLight(0x0f0f0f);
@@ -74,7 +108,7 @@ function init() {
 	
 	// add extras
 	gui = new GUI();
-	control = new Control(0, 0, 0, 0xff0000, 0x0000ff);
+	control = new Control(0);
 	addControl(control);
 	
 	addStatsObject();
@@ -84,22 +118,23 @@ function init() {
 }
 
 //function for creating textured planets
-function createMesh(geom, imageFile) {
+function gameObject(geom, imageFile, x, y, z) {
     var texture = THREE.ImageUtils.loadTexture("../content/" + imageFile)
     var mat = new THREE.MeshPhongMaterial();
     mat.map = texture;
 
     var mesh = new THREE.Mesh(geom, mat);
+    mesh.position.x = x;
+    mesh.position.y = y;
+    mesh.position.z = z;
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
     return mesh;
 }
 
 //Add controls to the controller
 function addControl(controlObject: Control):void {
-	gui.add(controlObject, 'rotationSpeedx',-10,10);
-    gui.add(controlObject, 'rotationSpeedy',-10,10);
-    gui.add(controlObject, 'rotationSpeedz',-10,10);
-	gui.addColor(controlObject, 'shirtColor');
-    gui.addColor(controlObject, 'pantsColor');
+	//gui.add(controlObject, 'rotationSpeed',-10,10);
 }
 
 function addStatsObject() {
@@ -117,10 +152,13 @@ function gameLoop():void {
 	
 	// render using requestAnimationFrame
 	requestAnimationFrame(gameLoop);
-    //set character rotation speed
-    sun.rotation.x += control.rotationSpeedx / 1000;
-    sun.rotation.y += control.rotationSpeedy / 1000;
-    sun.rotation.z += control.rotationSpeedz / 1000;
+    //set planet rotation speed
+    mercuryaxes.rotation.y += 0.01;
+    venusaxes.rotation.y += 0.005;
+    earthaxes.rotation.y += 0.004;
+    moonaxes.rotation.y += 0.01;
+    marsaxes.rotation.y += 0.002;
+    jupiteraxes.rotation.y += 0.001;
 	
 	renderer.render(scene, camera);
 }
