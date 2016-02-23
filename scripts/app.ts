@@ -8,6 +8,7 @@ import LambertMaterial = THREE.MeshLambertMaterial;
 import Mesh = THREE.Mesh;
 import SpotLight = THREE.SpotLight;
 import PointLight = THREE.PointLight;
+import DirectionalLight = THREE.DirectionalLight;
 import AmbientLight = THREE.AmbientLight;
 import Control = objects.Control;
 import GUI = dat.GUI;
@@ -19,6 +20,7 @@ var scene: Scene;
 var renderer: Renderer;
 var camera: PerspectiveCamera;
 var sun: Mesh;
+var glow: Mesh;
 var mercury: Mesh;
 var venus: Mesh;
 var earth: Mesh;
@@ -26,8 +28,12 @@ var moon: Mesh;
 var mars: Mesh;
 var jupiter: Mesh;
 var plane: Mesh;
+var mercuryLight: SpotLight;
+var venusLight: SpotLight;
+var earthLight: SpotLight;
+var marsLight: SpotLight;
+var jupiterLight: SpotLight;
 var spotLight: SpotLight;
-var pointLight: PointLight;
 var ambientLight: AmbientLight;
 var control: Control;
 var gui: GUI;
@@ -52,9 +58,12 @@ function init() {
     axis = new AxisHelper(20);
     scene.add(axis);
     
+    addSun();
     //Add Sun to solar system
-    sun = gameObject(new SphereGeometry(3, 20, 20), "sun.jpg",0,0,0);
-    scene.add(sun);
+    /*sun = gameObject(new SphereGeometry(3, 20, 20), "sun.jpg",0,0,0);
+    sun.castShadow = false;
+    sun.receiveShadow = false;
+    scene.add(sun);*/
     console.log("Added sun to scene...");
     
     //add mercury to solar system
@@ -91,20 +100,26 @@ function init() {
     scene.add(jupiteraxes);
     console.log("added jupiter to scene...");
     
+    // Add a SpotLight to the murcury
+	mercuryLight = targetLight(mercury);
+    scene.add(mercuryLight);
+    // Add a SpotLight to the venus
+	venusLight = targetLight(venus);
+    scene.add(venusLight);
+    // Add a SpotLight to the earth
+	earthLight = targetLight(earth);
+    scene.add(earthLight);
+    // Add a SpotLight to the mars
+	marsLight = targetLight(mars);
+    scene.add(marsLight);
+    // Add a SpotLight to the jupiter
+	jupiterLight = targetLight(jupiter);
+    scene.add(jupiterLight);
+    
     // Add an AmbientLight to the scene
     ambientLight = new AmbientLight(0x0f0f0f);
-    ambientLight.castShadow = false;
     scene.add(ambientLight);
     console.log("Added Ambient Light to scene");
-	
-	// Add a SpotLight to the scene
-	spotLight = new SpotLight(0xffffff);
-	spotLight.position.set (10, 15, 10);
-    spotLight.target;
-	spotLight.castShadow = true;
-    spotLight.shadowCameraNear = 1;
-	scene.add(spotLight);
-	console.log("Added Spot Light to Scene");
 	
 	// add extras
 	gui = new GUI();
@@ -115,6 +130,37 @@ function init() {
 	
 	document.body.appendChild(renderer.domElement);
 	gameLoop(); // render the scene	
+}
+
+function addSun()
+{
+	// Add the SUN
+	var geometry = new THREE.SphereGeometry(3, 20, 20);
+	var material = new THREE.MeshBasicMaterial({
+		map: THREE.ImageUtils.loadTexture('../content/sun.jpg')
+	});
+	sun = new THREE.Mesh(geometry, material);
+	sun.position.set(0, 0, 0);
+	sun.castShadow = false;
+	sun.receiveShadow = false;
+	
+	scene.add(sun);
+	
+	for(var i=5;i>=1;i--)
+	{
+		var sunGlow = new THREE.Mesh(
+			new THREE.SphereGeometry(0.5 + 0.1/i,32,32),
+			new THREE.MeshBasicMaterial({
+				color: 0xFCD440,
+				//color: 0x0000FF,
+				map: THREE.ImageUtils.loadTexture('../content/sun.jpg'),
+				transparent: true,
+				opacity: 0.05*i
+			})
+		);
+		sunGlow.position = sun.position;
+		scene.add(sunGlow);
+	}
 }
 
 //function for creating textured planets
@@ -130,6 +176,17 @@ function gameObject(geom, imageFile, x, y, z) {
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     return mesh;
+}
+
+//function for creating spotlights to follow planets
+function targetLight(object) {
+    spotLight = new SpotLight(0xffffff);
+    spotLight.target = object;
+	spotLight.castShadow = true;
+    spotLight.shadowCameraNear = 1;
+    spotLight.shadowMapWidth = 2048;
+    spotLight.shadowMapHeight = 2048;
+    return spotLight;
 }
 
 //Add controls to the controller
@@ -166,7 +223,7 @@ function gameLoop():void {
 // Setup default renderer
 function setupRenderer():void {
 	renderer = new Renderer();
-	renderer.setClearColor(0xCCCCCC, 1.0);
+	renderer.setClearColor(0x000000, 1.0);
 	renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMapType = THREE.PCFSoftShadowMap;
 	renderer.shadowMapEnabled = true;
