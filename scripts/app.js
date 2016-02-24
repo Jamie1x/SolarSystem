@@ -106,24 +106,19 @@ function init() {
     saturn.add(saturnRing);
     // Add a SpotLight to murcury
     mercuryLight = targetLight(mercury);
-    scene.add(mercuryLight);
-    // Add a SpotLight to venus
+    mercuryaxes.add(mercuryLight);
     venusLight = targetLight(venus);
-    scene.add(venusLight);
-    // Add a SpotLight to earth
+    venusaxes.add(venusLight);
     earthLight = targetLight(earth);
-    scene.add(earthLight);
-    // Add a SpotLight to mars
+    earthaxes.add(earthLight);
     marsLight = targetLight(mars);
-    scene.add(marsLight);
-    // Add a SpotLight to jupiter
+    marsaxes.add(marsLight);
     jupiterLight = targetLight(jupiter);
-    scene.add(jupiterLight);
-    // Add a SpotLight to saturn
+    jupiteraxes.add(jupiterLight);
     saturnLight = targetLight(saturn);
-    scene.add(saturnLight);
+    saturnaxes.add(saturnLight);
     // Add an AmbientLight to the scene
-    ambientLight = new AmbientLight(0x0f0f0f);
+    ambientLight = new AmbientLight(0x000000);
     scene.add(ambientLight);
     console.log("Added Ambient Light to scene");
     // add extras
@@ -161,7 +156,7 @@ function addSun() {
 //function for creating textured planets
 function planet(geom, imageFile, x, y, z) {
     var texture = THREE.ImageUtils.loadTexture("../content/" + imageFile);
-    var mat = new THREE.MeshPhongMaterial();
+    var mat = new THREE.MeshBasicMaterial();
     mat.map = texture;
     mesh = new Mesh(geom, mat);
     mesh.position.x = x;
@@ -173,7 +168,8 @@ function planet(geom, imageFile, x, y, z) {
 }
 //function for creating spotlights to follow planets
 function targetLight(object) {
-    spotLight = new SpotLight(0xffffff);
+    spotLight = new SpotLight(0xffffff, 2, 1000, Math.PI);
+    //spotLight.position.set(object.position.x - 5, 0, 0);
     spotLight.target = object;
     spotLight.castShadow = true;
     spotLight.shadowCameraNear = 1;
@@ -183,8 +179,15 @@ function targetLight(object) {
 }
 //Add controls to the controller
 function addControl(controlObject) {
-    var camLocation = gui.add(paramaters, 'camLocation', ["solar system", "mercury", "venus", "earth", "mars", "jupiter", "saturn"]);
-    //camLocation.onChange(function(value))
+    var camLocation = gui.add(paramaters, 'camLocation', [
+        "solar system",
+        "mercury",
+        "venus",
+        "earth",
+        "mars",
+        "jupiter",
+        "saturn"
+    ]);
 }
 function addStatsObject() {
     stats = new Stats();
@@ -199,14 +202,21 @@ function gameLoop() {
     stats.update();
     // render using requestAnimationFrame
     requestAnimationFrame(gameLoop);
-    //set planet rotation speed
+    //set planet rotation speeds
     mercuryaxes.rotation.y += 0.01;
+    mercury.rotation.y += 0.01;
     venusaxes.rotation.y += 0.005;
+    venus.rotation.y += 0.005;
     earthaxes.rotation.y += 0.004;
+    earth.rotation.y += 0.004;
     moonaxes.rotation.y += 0.01;
+    moon.rotation.y += 0.01;
     marsaxes.rotation.y += 0.002;
+    mars.rotation.y += 0.002;
     jupiteraxes.rotation.y += 0.001;
+    jupiter.rotation.y += 0.001;
     saturnaxes.rotation.y += 0.0005;
+    saturn.rotation.y += 0.0005;
     var value = paramaters.camLocation;
     var newCam;
     if (value == "solar system") {
@@ -214,11 +224,49 @@ function gameLoop() {
         camera.position.y = 16;
         camera.position.z = 25;
         camera.lookAt(scene.position);
+        scene.add(camera);
     }
     else if (value == "mercury") {
-        camera.position.x = mercury.position.x + 15;
-        camera.position.y = mercury.position.y + 16;
-        camera.position.z = mercury.position.z + 25;
+        camera.position.x = mercury.position.x - 1;
+        camera.position.y = mercury.position.y + 1;
+        camera.position.z = mercury.position.z + 1;
+        camera.lookAt(new Vector3(mercury.position.x, mercury.position.y, mercury.position.z));
+        mercuryaxes.add(camera);
+    }
+    else if (value == "venus") {
+        camera.position.x = venus.position.x - 1;
+        camera.position.y = venus.position.y + 1;
+        camera.position.z = venus.position.z + 2;
+        camera.lookAt(new Vector3(venus.position.x, venus.position.y, venus.position.z));
+        venusaxes.add(camera);
+    }
+    else if (value == "earth") {
+        camera.position.x = earth.position.x - 1;
+        camera.position.y = earth.position.y + 1;
+        camera.position.z = earth.position.z + 2.5;
+        camera.lookAt(new Vector3(earth.position.x, earth.position.y, earth.position.z));
+        earthaxes.add(camera);
+    }
+    else if (value == "mars") {
+        camera.position.x = mars.position.x - 1;
+        camera.position.y = mars.position.y + 1;
+        camera.position.z = mars.position.z + 1.5;
+        camera.lookAt(new Vector3(mars.position.x, mars.position.y, mars.position.z));
+        marsaxes.add(camera);
+    }
+    else if (value == "jupiter") {
+        camera.position.x = jupiter.position.x - 1;
+        camera.position.y = jupiter.position.y + 1;
+        camera.position.z = jupiter.position.z + 5;
+        camera.lookAt(new Vector3(jupiter.position.x, jupiter.position.y, jupiter.position.z));
+        jupiteraxes.add(camera);
+    }
+    else if (value == "saturn") {
+        camera.position.x = saturn.position.x - 1;
+        camera.position.y = saturn.position.y + 1;
+        camera.position.z = saturn.position.z + 4;
+        camera.lookAt(new Vector3(saturn.position.x, saturn.position.y, saturn.position.z));
+        saturnaxes.add(camera);
     }
     renderer.render(scene, camera);
 }
