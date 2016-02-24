@@ -1,8 +1,8 @@
 module objects {
 	export class Control {
-		rotationSpeed: number;
-		constructor(rotationSpeed: number) {
-			this.rotationSpeed = rotationSpeed;
+		camLocation: string[];
+		constructor(camLocation: string[]) {
+			this.camLocation = camLocation;
 		}
 	}
 }

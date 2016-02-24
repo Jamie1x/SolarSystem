@@ -1,8 +1,8 @@
 var objects;
 (function (objects) {
     var Control = (function () {
-        function Control(rotationSpeed) {
-            this.rotationSpeed = rotationSpeed;
+        function Control(camLocation) {
+            this.camLocation = camLocation;
         }
         return Control;
     })();
