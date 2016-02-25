@@ -106,17 +106,17 @@ function init() {
     saturn.add(saturnRing);
     // Add a SpotLight to murcury
     mercuryLight = targetLight(mercury);
-    mercuryaxes.add(mercuryLight);
+    scene.add(mercuryLight);
     venusLight = targetLight(venus);
-    venusaxes.add(venusLight);
+    scene.add(venusLight);
     earthLight = targetLight(earth);
-    earthaxes.add(earthLight);
+    scene.add(earthLight);
     marsLight = targetLight(mars);
-    marsaxes.add(marsLight);
+    scene.add(marsLight);
     jupiterLight = targetLight(jupiter);
-    jupiteraxes.add(jupiterLight);
+    scene.add(jupiterLight);
     saturnLight = targetLight(saturn);
-    saturnaxes.add(saturnLight);
+    scene.add(saturnLight);
     // Add an AmbientLight to the scene
     ambientLight = new AmbientLight(0x000000);
     scene.add(ambientLight);
@@ -156,7 +156,7 @@ function addSun() {
 //function for creating textured planets
 function planet(geom, imageFile, x, y, z) {
     var texture = THREE.ImageUtils.loadTexture("../content/" + imageFile);
-    var mat = new THREE.MeshBasicMaterial();
+    var mat = new THREE.MeshPhongMaterial();
     mat.map = texture;
     mesh = new Mesh(geom, mat);
     mesh.position.x = x;
@@ -168,7 +168,7 @@ function planet(geom, imageFile, x, y, z) {
 }
 //function for creating spotlights to follow planets
 function targetLight(object) {
-    spotLight = new SpotLight(0xffffff, 2, 1000, Math.PI);
+    spotLight = new SpotLight(0xffffff, 2);
     //spotLight.position.set(object.position.x - 5, 0, 0);
     spotLight.target = object;
     spotLight.castShadow = true;
