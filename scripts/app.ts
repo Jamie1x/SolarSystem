@@ -24,6 +24,7 @@ var scene: Scene;
 var renderer: Renderer;
 var camera: PerspectiveCamera;
 var sun: Mesh;
+var sun2: Mesh;
 var mercury: Mesh;
 var venus: Mesh;
 var earth: Mesh;
@@ -36,12 +37,14 @@ var saturn: Mesh;
 var saturnRing: Mesh;
 var skyBox: Mesh;
 var mesh: Mesh;
+var sunLight: PointLight;
 var mercuryLight: SpotLight;
 var venusLight: SpotLight;
 var earthLight: SpotLight;
 var marsLight: SpotLight;
 var jupiterLight: SpotLight;
 var saturnLight: SpotLight;
+var saturnLight2: SpotLight;
 var spotLight: SpotLight;
 var ambientLight: AmbientLight;
 var control: Control;
@@ -57,6 +60,8 @@ var marsMoonaxes = new THREE.Object3D;
 var marsMoon2axes = new THREE.Object3D;
 var jupiteraxes = new THREE.Object3D;
 var saturnaxes = new THREE.Object3D;
+var saturnaxes2 = new THREE.Object3D;
+var camAxes = new THREE.Object3D;
 var paramaters;
 
 function init() {
@@ -77,61 +82,71 @@ function init() {
     sunMat.map = THREE.ImageUtils.loadTexture('../content/sun.jpg');
     sun = new Mesh(sphereGeometry, sunMat);
     scene.add(sun);
-    console.log("Added sun to scene...");
     
     //Add mercury to solar system
-    mercury = planet(new SphereGeometry(0.6, 20, 20), "mercury.jpg", 4, 0, 0);
+    mercury = planet(new SphereGeometry(0.6, 20, 20), "mercury.jpg", 0, 0, -4);
     mercuryaxes.add(mercury);
     scene.add(mercuryaxes);
-    console.log("added mercury to scene...");
     
     //Add venus to solar system
-    venus = planet(new SphereGeometry(0.8, 20, 20), "venus.jpg", 6, 0, 0);
+    venus = planet(new SphereGeometry(0.8, 20, 20), "venus.jpg", 0, 0, -6);
     venusaxes.add(venus);
     scene.add(venusaxes);
-    console.log("added venus to scene...");
     
     //Add earth to solar system
-    earth = planet(new SphereGeometry(1, 20, 20), "earth.jpg", 9, 0, 0);
+    earth = planet(new SphereGeometry(1, 20, 20), "earth.jpg", 0, 0, -9);
     earthaxes.add(earth);
     //Add moon to earth
-    moon = planet(new SphereGeometry(0.2, 20, 20), "moon.jpg", 2, 0, 0);
+    moon = planet(new SphereGeometry(0.2, 20, 20), "moon.jpg", 0, 0, -2);
     moonaxes.add(moon);
     earth.add(moonaxes);
     scene.add(earthaxes);
-    console.log("added earth and moon to scene...");
     
     //Add mars to solar system
-    mars = planet(new SphereGeometry(0.6, 20, 20), "mars.jpg", 13, 0, 0);
+    mars = planet(new SphereGeometry(0.6, 20, 20), "mars.jpg", 0, 0, -13);
     marsaxes.add(mars);
     //Add moon to mars
-    marsMoon = planet(new SphereGeometry(0.1, 20, 20), "moon.jpg", 0, 0, 0.8);
+    marsMoon = planet(new SphereGeometry(0.1, 20, 20), "moon.jpg", 0.8, 0, 0);
     marsMoonaxes.add(marsMoon);
     mars.add(marsMoonaxes);
     //Add second moon to mars
-    marsMoon2 = planet(new SphereGeometry(0.15, 20, 20), "moon.jpg", 1.2, 0, 0);
+    marsMoon2 = planet(new SphereGeometry(0.15, 20, 20), "moon.jpg", 0, 0, -1.2);
     marsMoon2axes.add(marsMoon2);
     mars.add(marsMoon2axes);
     scene.add(marsaxes);
-    console.log("added mars to scene...");
     
     //Add jupiter to solar system
-    jupiter = planet(new SphereGeometry(1.6, 20, 20), "jupiter.jpg", 17, 0, 0);
+    jupiter = planet(new SphereGeometry(1.6, 20, 20), "jupiter.jpg", 0, 0, -17);
     jupiteraxes.add(jupiter);
     scene.add(jupiteraxes);
-    console.log("added jupiter to scene...");
     
     //Add saturn to solar system
-    saturn = planet(new SphereGeometry(1.3, 20, 20), "saturn.jpg", 20, 0, 0);
+    saturn = planet(new SphereGeometry(1.3, 20, 20), "saturn.jpg", 0, 0, -20);
     saturnaxes.add(saturn);
-    scene.add(saturnaxes);
     //Add saturn's ring to solar system
     saturnRing = planet(new PlaneGeometry(5, 5), "saturnRing.png", 0, 0, 0);
     saturnRing.material.transparent = true;
     saturnRing.material.opacity = 0.5;
     saturnRing.rotation.x = -0.5 * Math.PI;
     saturn.add(saturnRing);
-    console.log("added saturn to scene...");
+    scene.add(saturnaxes);
+    //Add second axes to rotate around second sun
+    saturnaxes2.position.set(0,0,-40);
+    saturnaxes2.rotation.y = Math.PI;
+    scene.add(saturnaxes2);
+    
+    //Add a second sun
+    var sphereGeometry = new SphereGeometry(3, 20, 20);
+    var sunMat2 = new BasicMaterial();
+    sunMat2.map = THREE.ImageUtils.loadTexture('../content/sun.jpg');
+    sun2 = new Mesh(sphereGeometry, sunMat2);
+    sun2.position.set(0,0,-40);
+    scene.add(sun2);
+    
+    //Add light to second sun
+    sunLight = new PointLight(0xffffff,2,22);
+    sunLight.position.set(0,0,-40);
+    scene.add(sunLight);
     
     //Add a SpotLight to follow each planet
     mercuryLight = targetLight(mercury);
@@ -150,13 +165,13 @@ function init() {
     //Add an AmbientLight to the scene
     ambientLight = new AmbientLight(0x0f0f0f);
     scene.add(ambientLight);
-    console.log("Added Ambient Light to scene");
     
     //Add a skyBox for a starry background
-	var cubeGeometry = new CubeGeometry(50,50,50);
-    var skyMat = new LambertMaterial();
+	var cubeGeometry = new CubeGeometry(100,100,100);
+    var skyMat = new BasicMaterial();
     skyMat.map = THREE.ImageUtils.loadTexture('../content/stars.jpg');
     skyBox = new Mesh(cubeGeometry, skyMat);
+    skyBox.position.set(0,0,-40);
     skyBox.material.transparent = true;
     skyBox.material.opacity = 0.5;
     skyBox.material.side = THREE.BackSide;
@@ -179,7 +194,7 @@ function planet(geom, imageFile, x, y, z) {
     var texture = THREE.ImageUtils.loadTexture("../content/" + imageFile)
     var mat = new PhongMaterial();
     mat.map = texture;
-
+    
     mesh = new Mesh(geom, mat);
     mesh.position.x = x;
     mesh.position.y = y;
@@ -191,7 +206,7 @@ function planet(geom, imageFile, x, y, z) {
 
 //Function for creating spotlights to follow planets
 function targetLight(object) {
-    spotLight = new SpotLight(0xffffff, 2);
+    spotLight = new SpotLight(0xffffff, 2, 22);
     spotLight.target = object;
     spotLight.castShadow = true;
     spotLight.shadowCameraNear = 1;
@@ -245,8 +260,22 @@ function gameLoop(): void {
     marsMoon2.rotation.y += 0.005;
     jupiteraxes.rotation.y += 0.001;
     jupiter.rotation.y += 0.001;
-    saturnaxes.rotation.y += 0.0005;
-    saturn.rotation.y += 0.0005;
+    saturnaxes.rotation.y += 0.007;
+    saturn.rotation.y += 0.007;
+    saturnaxes2.rotation.y += -0.007;
+    
+    //switches to other sun after orbiting 360 degrees around first sun
+    if (saturnaxes.rotation.y >= Math.PI * 2){
+        saturnaxes2.add(saturn);
+    }
+    //switches back to first sun if sun has not rotated 360 degrees
+    else{
+        saturnaxes.add(saturn);
+    }
+    //resets suns rotation after spinning 720 degrees, for continuous loop
+    if (saturnaxes.rotation.y >= Math.PI * 4){
+        saturnaxes.rotation.y = 0;
+    }
 
     //Update camera location from controller
     var value = paramaters.camLocation;
@@ -258,47 +287,47 @@ function gameLoop(): void {
         scene.add(camera);
     }
     else if (value == "mercury") {
-        camera.position.x = mercury.position.x - 1;
+        camera.position.x = mercury.position.x + 1;
         camera.position.y = mercury.position.y + 1;
         camera.position.z = mercury.position.z + 1;
         camera.lookAt(new Vector3(mercury.position.x, mercury.position.y, mercury.position.z));
         mercuryaxes.add(camera);
     }
     else if (value == "venus") {
-        camera.position.x = venus.position.x - 1;
+        camera.position.x = venus.position.x + 2;
         camera.position.y = venus.position.y + 1;
-        camera.position.z = venus.position.z + 2;
+        camera.position.z = venus.position.z + 1;
         camera.lookAt(new Vector3(venus.position.x, venus.position.y, venus.position.z));
         venusaxes.add(camera);
     }
     else if (value == "earth") {
-        camera.position.x = earth.position.x - 1;
+        camera.position.x = earth.position.x + 2.5;
         camera.position.y = earth.position.y + 1;
-        camera.position.z = earth.position.z + 2.5;
+        camera.position.z = earth.position.z + 1;
         camera.lookAt(new Vector3(earth.position.x, earth.position.y, earth.position.z));
         earthaxes.add(camera);
     }
     else if (value == "mars") {
-        camera.position.x = mars.position.x - 1;
+        camera.position.x = mars.position.x + 1.5;
         camera.position.y = mars.position.y + 1;
-        camera.position.z = mars.position.z + 1.5;
+        camera.position.z = mars.position.z + 1;
         camera.lookAt(new Vector3(mars.position.x, mars.position.y, mars.position.z));
         marsaxes.add(camera);
     }
     else if (value == "jupiter") {
-        camera.position.x = jupiter.position.x - 1;
+        camera.position.x = jupiter.position.x + 5;
         camera.position.y = jupiter.position.y + 1;
-        camera.position.z = jupiter.position.z + 5;
+        camera.position.z = jupiter.position.z + 1;
         camera.lookAt(new Vector3(jupiter.position.x, jupiter.position.y, jupiter.position.z));
         jupiteraxes.add(camera);
     }
-    else if (value == "saturn") {
-        camera.position.x = saturn.position.x - 1;
+    /*else if (value == "saturn") {
+        camera.position.x = saturn.position.x + 4;
         camera.position.y = saturn.position.y + 1;
-        camera.position.z = saturn.position.z + 4;
+        camera.position.z = saturn.position.z + 1;
         camera.lookAt(new Vector3(saturn.position.x, saturn.position.y, saturn.position.z));
         saturnaxes.add(camera);
-    }
+    }*/
 
     renderer.render(scene, camera);
 }
