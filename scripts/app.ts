@@ -61,7 +61,6 @@ var marsMoon2axes = new THREE.Object3D;
 var jupiteraxes = new THREE.Object3D;
 var saturnaxes = new THREE.Object3D;
 var saturnaxes2 = new THREE.Object3D;
-var camAxes = new THREE.Object3D;
 var paramaters;
 
 function init() {
@@ -131,7 +130,7 @@ function init() {
     saturn.add(saturnRing);
     scene.add(saturnaxes);
     //Add second axes to rotate around second sun
-    saturnaxes2.position.set(0,0,-40);
+    saturnaxes2.position.set(0, 0, -40);
     saturnaxes2.rotation.y = Math.PI;
     scene.add(saturnaxes2);
     
@@ -140,12 +139,12 @@ function init() {
     var sunMat2 = new BasicMaterial();
     sunMat2.map = THREE.ImageUtils.loadTexture('../content/sun.jpg');
     sun2 = new Mesh(sphereGeometry, sunMat2);
-    sun2.position.set(0,0,-40);
+    sun2.position.set(0, 0, -40);
     scene.add(sun2);
     
     //Add light to second sun
-    sunLight = new PointLight(0xffffff,2,22);
-    sunLight.position.set(0,0,-40);
+    sunLight = new PointLight(0xffffff, 2, 22);
+    sunLight.position.set(0, 0, -40);
     scene.add(sunLight);
     
     //Add a SpotLight to follow each planet
@@ -167,11 +166,10 @@ function init() {
     scene.add(ambientLight);
     
     //Add a skyBox for a starry background
-	var cubeGeometry = new CubeGeometry(100,100,100);
+    var cubeGeometry = new CubeGeometry(150, 150, 150);
     var skyMat = new BasicMaterial();
     skyMat.map = THREE.ImageUtils.loadTexture('../content/stars.jpg');
     skyBox = new Mesh(cubeGeometry, skyMat);
-    skyBox.position.set(0,0,-40);
     skyBox.material.transparent = true;
     skyBox.material.opacity = 0.5;
     skyBox.material.side = THREE.BackSide;
@@ -194,7 +192,7 @@ function planet(geom, imageFile, x, y, z) {
     var texture = THREE.ImageUtils.loadTexture("../content/" + imageFile)
     var mat = new PhongMaterial();
     mat.map = texture;
-    
+
     mesh = new Mesh(geom, mat);
     mesh.position.x = x;
     mesh.position.y = y;
@@ -265,15 +263,15 @@ function gameLoop(): void {
     saturnaxes2.rotation.y += -0.007;
     
     //switches to other sun after orbiting 360 degrees around first sun
-    if (saturnaxes.rotation.y >= Math.PI * 2){
+    if (saturnaxes.rotation.y >= Math.PI * 2) {
         saturnaxes2.add(saturn);
     }
     //switches back to first sun if sun has not rotated 360 degrees
-    else{
+    else {
         saturnaxes.add(saturn);
     }
     //resets suns rotation after spinning 720 degrees, for continuous loop
-    if (saturnaxes.rotation.y >= Math.PI * 4){
+    if (saturnaxes.rotation.y >= Math.PI * 4) {
         saturnaxes.rotation.y = 0;
     }
 
@@ -321,13 +319,22 @@ function gameLoop(): void {
         camera.lookAt(new Vector3(jupiter.position.x, jupiter.position.y, jupiter.position.z));
         jupiteraxes.add(camera);
     }
-    /*else if (value == "saturn") {
-        camera.position.x = saturn.position.x + 4;
-        camera.position.y = saturn.position.y + 1;
-        camera.position.z = saturn.position.z + 1;
+    else if (value == "saturn") {
         camera.lookAt(new Vector3(saturn.position.x, saturn.position.y, saturn.position.z));
-        saturnaxes.add(camera);
-    }*/
+        //move camera when orbiting different sun
+        if (saturnaxes.rotation.y >= Math.PI * 2) {
+            camera.position.x = saturn.position.x - 4;
+            camera.position.y = saturn.position.y + 1;
+            camera.position.z = saturn.position.z - 1;
+            saturnaxes2.add(camera);
+        }
+        else {
+            camera.position.x = saturn.position.x + 4;
+            camera.position.y = saturn.position.y + 1;
+            camera.position.z = saturn.position.z + 1;
+            saturnaxes.add(camera);
+        }
+    }
 
     renderer.render(scene, camera);
 }
@@ -339,7 +346,6 @@ function setupRenderer(): void {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMapType = THREE.PCFSoftShadowMap;
     renderer.shadowMapEnabled = true;
-    console.log("Finished setting up Renderer...");
 }
 
 //Setup main camera for the scene
@@ -349,5 +355,4 @@ function setupCamera(): void {
     camera.position.y = 16;
     camera.position.z = 25;
     camera.lookAt(scene.position);
-    console.log("Finished setting up Camera...");
 }

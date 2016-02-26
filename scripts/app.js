@@ -59,7 +59,6 @@ var marsMoon2axes = new THREE.Object3D;
 var jupiteraxes = new THREE.Object3D;
 var saturnaxes = new THREE.Object3D;
 var saturnaxes2 = new THREE.Object3D;
-var camAxes = new THREE.Object3D;
 var paramaters;
 function init() {
     // Instantiate a new Scene object
@@ -149,11 +148,10 @@ function init() {
     ambientLight = new AmbientLight(0x0f0f0f);
     scene.add(ambientLight);
     //Add a skyBox for a starry background
-    var cubeGeometry = new CubeGeometry(100, 100, 100);
+    var cubeGeometry = new CubeGeometry(150, 150, 150);
     var skyMat = new BasicMaterial();
     skyMat.map = THREE.ImageUtils.loadTexture('../content/stars.jpg');
     skyBox = new Mesh(cubeGeometry, skyMat);
-    skyBox.position.set(0, 0, -40);
     skyBox.material.transparent = true;
     skyBox.material.opacity = 0.5;
     skyBox.material.side = THREE.BackSide;
@@ -290,13 +288,22 @@ function gameLoop() {
         camera.lookAt(new Vector3(jupiter.position.x, jupiter.position.y, jupiter.position.z));
         jupiteraxes.add(camera);
     }
-    /*else if (value == "saturn") {
-        camera.position.x = saturn.position.x + 4;
-        camera.position.y = saturn.position.y + 1;
-        camera.position.z = saturn.position.z + 1;
+    else if (value == "saturn") {
         camera.lookAt(new Vector3(saturn.position.x, saturn.position.y, saturn.position.z));
-        saturnaxes.add(camera);
-    }*/
+        //move camera when orbiting different sun
+        if (saturnaxes.rotation.y >= Math.PI * 2) {
+            camera.position.x = saturn.position.x - 4;
+            camera.position.y = saturn.position.y + 1;
+            camera.position.z = saturn.position.z - 1;
+            saturnaxes2.add(camera);
+        }
+        else {
+            camera.position.x = saturn.position.x + 4;
+            camera.position.y = saturn.position.y + 1;
+            camera.position.z = saturn.position.z + 1;
+            saturnaxes.add(camera);
+        }
+    }
     renderer.render(scene, camera);
 }
 //Setup default renderer
@@ -306,7 +313,6 @@ function setupRenderer() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMapType = THREE.PCFSoftShadowMap;
     renderer.shadowMapEnabled = true;
-    console.log("Finished setting up Renderer...");
 }
 //Setup main camera for the scene
 function setupCamera() {
@@ -315,7 +321,6 @@ function setupCamera() {
     camera.position.y = 16;
     camera.position.z = 25;
     camera.lookAt(scene.position);
-    console.log("Finished setting up Camera...");
 }
 
 //# sourceMappingURL=app.js.map
