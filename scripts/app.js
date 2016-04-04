@@ -127,10 +127,13 @@ function init() {
     sun2 = new Mesh(sphereGeometry, sunMat2);
     sun2.position.set(0, 0, -40);
     scene.add(sun2);
-    //Add light to second sun
+    //Add light to sun
     sunLight = new PointLight(0xffffff, 2, 22);
-    sunLight.position.set(0, 0, -40);
     scene.add(sunLight);
+    //Add light to second sun
+    var sunLight2 = new PointLight(0xffffff, 2, 22);
+    sunLight2.position.set(0, 0, -40);
+    scene.add(sunLight2);
     //Add a SpotLight to follow each planet
     mercuryLight = targetLight(mercury);
     scene.add(mercuryLight);
@@ -168,7 +171,7 @@ function init() {
 //Function for creating textured planets
 function planet(geom, imageFile, x, y, z) {
     var texture = THREE.ImageUtils.loadTexture("../content/" + imageFile);
-    var mat = new PhongMaterial();
+    var mat = new LambertMaterial();
     mat.map = texture;
     mesh = new Mesh(geom, mat);
     mesh.position.x = x;
@@ -180,10 +183,11 @@ function planet(geom, imageFile, x, y, z) {
 }
 //Function for creating spotlights to follow planets
 function targetLight(object) {
-    spotLight = new SpotLight(0xffffff, 2, 22);
+    spotLight = new SpotLight(0xffffff, 0.1, 22);
     spotLight.target = object;
     spotLight.castShadow = true;
     spotLight.shadowCameraNear = 1;
+    spotLight.shadowCameraFar = 22;
     spotLight.shadowMapWidth = 2048;
     spotLight.shadowMapHeight = 2048;
     return spotLight;
@@ -243,6 +247,9 @@ function gameLoop() {
     //resets suns rotation after spinning 720 degrees, for continuous loop
     if (saturnaxes.rotation.y >= Math.PI * 4) {
         saturnaxes.rotation.y = 0;
+    }
+    if (saturnaxes2.rotation.y <= -(Math.PI * 4)) {
+        saturnaxes2.rotation.y = 0;
     }
     //Update camera location from controller
     var value = paramaters.camLocation;
